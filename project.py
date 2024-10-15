@@ -17,6 +17,7 @@ from langchain_openai import OpenAIEmbeddings
 # Ask if user has any more questions , repeat until user says no
 
 
+# COUNT represents ID of vector store, resetting every iteration program is run
 COUNT = 0
 
 load_dotenv()
@@ -32,8 +33,8 @@ def find_website(website):
     Uses Chatgpt to find a list of websites based on a user query
     '''
     prompt_template = ChatPromptTemplate.from_messages([
-    ("system","You are an ai assistant that finds the top most visited websites based on what the user asks for"),
-    ("human","Find me the urls of {website}")])
+    ("system","Find full website addresses related to {website}"
+    )])
 
     format_prompt = RunnableLambda(lambda x: prompt_template.format_prompt(**x))
     invoke_model = RunnableLambda(lambda x: model.invoke(x.to_messages()))
@@ -43,6 +44,7 @@ def find_website(website):
 
     response = chain.invoke({"website":website})
     websites = []
+    
     for w in response.split():
         if '[' in w:
             websites.append(w[1:].split(']')[0])
@@ -51,6 +53,7 @@ def find_website(website):
 def scrape(site):
     
     loader = WebBaseLoader([site])
+    
     documents = loader.load()
     text_splitter = CharacterTextSplitter(separator="\n",chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
@@ -64,12 +67,10 @@ def add_store(text,Id):
     doc= [Document(
     text,
     id=Id)]
-
     vector_store.add_documents(doc)
     return 
 
-def add_store_site(site):
-    
+def add_store_site(site):    
     # This will iterate through a link and add information in chunks to the vector store 
     scraped = scrape(site)
     global COUNT 
@@ -78,28 +79,70 @@ def add_store_site(site):
         COUNT+=1
     return     
 
-add_store_site('https://www.apple.com')
+def query_store(query):
 
-    # retriever = vector_store.as_retriever(
-    #     search_type="similarity_score_threshold",
-    #     search_kwargs={'k':2, "score_threshold":.3}
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={'k':2, "score_threshold":.3}) 
+    content = []
+    if retriever.invoke(query)!=[]:
+        for x in relevant_docs:
+            content.append(x.page_content)
+    return content 
 
-    # )
-    # query = "This is a document about hawaii"
-    # relevant_docs = retriever.invoke(query)
-    # if relevant_docs!=[]:
-    #     for x in relevant_docs:
-    #         print(x.page_content)
-
-
-# while True:
-#     query = input("What website would you like to learn about today?: ")
+usable_data = []
+while True:
+    query = input("What would you like to learn about today?: ")
     
-#     if query.lower() == 'exit':
-#         break
+    if query.lower() == 'exit':
+        break
 
-#     websites = find_website(query)
-#     for s in websites:
+    cur_count = COUNT 
+    websites = find_website(query)
+    print(websites)
+    for s in websites:
+        if 'www' in s or 'https' in s:
+            try:           
+                add_store_site(s)
+            except BaseException as error:
+                continue
+            
+    
+    if COUNT - cur_count == 0:
+        prompt_template = ChatPromptTemplate.from_messages([
+            ("system","Please give information about  {topic} "),])
+        chain = prompt_template | model | StrOutputParser()
+        result = chain.invoke({
+                "topic":query })
+        print(result)        
+               
+    else:
+        query_2 = input(f"What would you like to learn about {query}:")
+        retriever = vector_store.as_retriever(
+            search_type="similarity_score_threshold",
+            search_kwargs={'k':5, "score_threshold":.1})
+        
+        relevant_docs = retriever.invoke(query_2)
+        
+        if relevant_docs!=[]:
+            for x in relevant_docs:
+                usable_data.append(x.page_content)
+
+            result = model.invoke(usable_data)
+            print(result.content) 
+        else:
+            prompt_template = ChatPromptTemplate.from_messages([
+            ("system","Please give information about  {topic} regarding {topic2}"),])
+            chain = prompt_template | model | StrOutputParser()
+
+            result = chain.invoke({
+                    "topic":query,
+                    "topic2":query_2
+                })
+            print(result)    
+             
+        
+
       
 
 # query = "User Query Goes here, related to website"
