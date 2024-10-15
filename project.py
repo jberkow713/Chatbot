@@ -22,9 +22,64 @@ from langchain_openai import OpenAIEmbeddings
 
 load_dotenv()
 model = ChatOpenAI(model='gpt-4o')
+chat history = []
+
+def find_website(website):
+    '''
+    Uses Chatgpt to find a list of websites based on a user query
+    '''
+    prompt_template = ChatPromptTemplate.from_messages([
+    ("system","You are an ai assistant that finds the top most visited websites based on what the user asks for"),
+    ("human","Find me the urls of {website}")])
+
+    format_prompt = RunnableLambda(lambda x: prompt_template.format_prompt(**x))
+    invoke_model = RunnableLambda(lambda x: model.invoke(x.to_messages()))
+    parse_output = RunnableLambda(lambda x: x.content)
+
+    chain = RunnableSequence(format_prompt,invoke_model,parse_output)
+
+    response = chain.invoke({"website":website})
+    websites = []
+    for w in response.split():
+        if '[' in w:
+            websites.append(w[1:].split(']')[0])
+    return websites
+
+format_prompt = RunnableLambda(lambda x: prompt_template.format_prompt(**x))
+invoke_model = RunnableLambda(lambda x: model.invoke(x.to_messages()))
+parse_output = RunnableLambda(lambda x: x.content)
+
+chain = RunnableSequence(format_prompt,invoke_model,parse_output)
+
+response = chain.invoke({"topic":"sharks", "joke_count":2})
+
+def scrape(website):
+    
+    loader = WebBaseLoader(url)
+    documents = loader.load()
+
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    docs = text_splitter.split_documents(documents)
+    for doc in docs:    
+        words = doc.page_content.split()
+        print(' '.join(words))
+
+while True:
+    query = input("What website would you like to learn about today?: ")
+    
+    if query.lower() == 'exit':
+        break
+
+    website = model.invoke(HumanMessage(content=query))
+    response= website.content
+
+    chat_history.append(AIMessage(content=response))
+
+    print(response)
+
 
 prompt_template = ChatPromptTemplate.from_messages([
-    ("system","You are a comedian who tells jokes about {topic}"),
+    ("system","Which website would you like to get information from?"),
     ("human","Tell me {joke_count} jokes")
 ])
 
