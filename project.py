@@ -11,12 +11,6 @@ from langchain_core.documents import Document
 import chromadb
 from langchain_openai import OpenAIEmbeddings
 
-# TODO
-# Then take the users secondary query, and compare it to the information in the data store, 
-# Return information to the user
-# Ask if user has any more questions , repeat until user says no
-
-
 # COUNT represents ID of vector store, resetting every iteration program is run
 COUNT = 0
 
@@ -41,7 +35,6 @@ def find_website(website):
     parse_output = RunnableLambda(lambda x: x.content)
 
     chain = RunnableSequence(format_prompt,invoke_model,parse_output)
-
     response = chain.invoke({"website":website})
     websites = []
     
@@ -53,7 +46,6 @@ def find_website(website):
 def scrape(site):
     
     loader = WebBaseLoader([site])
-    
     documents = loader.load()
     text_splitter = CharacterTextSplitter(separator="\n",chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
@@ -107,7 +99,6 @@ while True:
             except BaseException as error:
                 continue
             
-    
     if COUNT - cur_count == 0:
         prompt_template = ChatPromptTemplate.from_messages([
             ("system","Please give information about  {topic} "),])
@@ -140,18 +131,3 @@ while True:
                     "topic2":query_2
                 })
             print(result)    
-             
-        
-
-      
-
-# query = "User Query Goes here, related to website"
-# relevant_docs = retriever.invoke(query)
-# if relevant_docs!=[]:
-#     for x in relevant_docs:
-#         print(x.page_content) 
-
-# chat_history = []
-# system_message = SystemMessage(content="You are a very sarcastic AI assistant")
-# chat_history.append(system_message)
-
