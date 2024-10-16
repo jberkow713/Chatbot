@@ -82,8 +82,9 @@ def query_store(query):
             content.append(x.page_content)
     return content 
 
-usable_data = []
+
 while True:
+    usable_data = []
     query = input("What would you like to learn about today?: ")
     
     if query.lower() == 'exit':
