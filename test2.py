@@ -6,7 +6,6 @@ def enum_dict(top,num):
         D[idx]=val
     return D 
 
-
 def find_sorted_dict(D):
     sorted_items = sorted(D.items(), key=lambda item: item[1])
     print([x[1] for x in sorted_items])
@@ -14,7 +13,6 @@ def find_sorted_dict(D):
 
 def find_sorted_random_keys(top,num):
     d = enum_dict(top,num)
-    
     return find_sorted_dict(d)
 
-print(find_sorted_random_keys(1000,10))
+print(find_sorted_random_keys(1000,100))
