@@ -105,32 +105,78 @@ if __name__ == '__main__':
         TEXT_CONTENTS = []
         if results:
             # Print a structured summary of the first few results
-            for i, item in enumerate(results):
-                # if i >= 5: # Limit output for brevity
-                #     print(f"... and {len(results) - 5} more tags found.")
-                #     break
-                
-                # print(f"\n--- P Tag {i+1} ---")
-                
-                # # Print attributes
-                # if item['attributes']:
-                #     print("ATTRIBUTES:")
-                #     for attr_key, attr_value in item['attributes'].items():
-                #         print(f"  {attr_key}: {attr_value}")
-                # else:
-                #     print("ATTRIBUTES: None")
-                    
+            for i, item in enumerate(results):                    
                 # Print text content
                 text_content = item['text_content']
-                
-
                 if text_content and text_content not in TEXT_CONTENTS:
                     # print("TEXT CONTENT:")
                     TEXT_CONTENTS.append(text_content)
                     # print(text_content[:150] + '...' if len(text_content) > 150 else text_content)
                 else:
-                    print("TEXT CONTENT: (Empty)")
-                
+                    print("TEXT CONTENT: (Empty)")        
         else:
             print("No <p> tags were found between the first and second anchor tag instances in the static HTML source.")
+        
         print(TEXT_CONTENTS)    
+
+'''
+
+OUTPUT:
+
+Fetching static HTML content from: https://cloud.google.com/security/compliance/fedramp?e=48754805#services-in-scope
+Two anchor <p> tags found. Defining collection window between them.
+
+================================================================================
+STATIC SCRAPE RESULTS (Content between first and second anchor tag)
+Successfully extracted data from 157 <p> tags.
+================================================================================
+['Access Approval', 'Access Context Manager', 'Access Transparency', 'Admin Console (including Admin SDK, Directory Sync)',
+ 'Agent Assist', 'Agentspace (as part of Vertex AI Search)', 'AI Platform Data Labeling', 
+ 'AI Platform Neural Architecture Search (NAS)', 'AI Platform Training and Prediction (formerly Cloud Machine Learning Engine)', 
+ 'AlloyDB', 'Anthos Config Management (ACM) (feature of GKE Enterprise)', 'API Keys', 'Apigee', 
+ 'App Engine standard environment without bundled services', 'Application Integration', 'Artifact Analysis', 
+ 'Artifact Registry', 'Assured Open Source Software (AOSS)', 'Assured Workloads', 'AutoML Natural Language',
+  'AutoML Tables', 'AutoML Translation', 'AutoML Video', 'AutoML Vision', 'Backup for GKE', 'Batch', 
+  'BeyondCorp Enterprise', 'BigQuery', 'BigQuery Data Transfer Service', 'Bigtable', 'Binary Authorization', 
+  'Care Studio', 'Certificate Authority Service', 'Certificate Manager', 'Cloud Armor (base)', 
+  'Cloud Asset Inventory', 'Cloud Billing', 'Cloud Build', 'Cloud CDN', 'Cloud Composer', 'Cloud Console',
+   'Cloud Console App', 'Cloud Data Fusion', 'Cloud Deploy', 'Cloud Deployment Manager', 'Cloud DNS', 
+   'Cloud Endpoints', 'Cloud Error Reporting', 'Cloud External Key Manager (EKM)', 
+   'Cloud Functions for Firebase', 'Cloud Healthcare API', 'Cloud HSM', 'Cloud Identity', 
+   'Cloud IDS', 'Cloud Interconnect', 'Cloud Key Management Service', 
+   'Cloud Life Sciences (formerly Google Genomics)', 'Cloud Load Balancing (L4 ILB)', 
+   'Cloud Load Balancing (L7 ILB / Regional XLB)', 'Cloud Load Balancing (Network Load Balancing)',
+    'Cloud Logging (includes Error Reporting)', 'Cloud Monitoring', 'Cloud Network Address Translation (NAT)',
+     'Cloud Natural Language API', 'Cloud NGFW (Cloud Firewall) (Standard & Essential)', 
+     'Cloud Profiler (Stackdriver Profiler)', 'Cloud Resource Manager', 'Cloud Router',
+      'Cloud Run', 'Cloud Run Functions', 'Cloud Scheduler', 'Cloud SDK', 'Cloud Service Mesh', 
+      'Cloud Shell', 'Cloud Source Repositories', 'Cloud SQL', 'Cloud Storage', 
+      'Cloud Storage for Firebase', 'Cloud Tasks', 'Cloud Trace (formerly Stackdriver Trace)', 
+      'Cloud Translation', 'Cloud Vision API', 'Cloud VPN', 'Cloud Workstations', 'Compute Engine', 
+      'Connect', 'Container Registry', 'Conversational Agents (Dialogflow CX)', 
+      'Conversational Insights (CCAI Insights)', 'Data Catalog', 'Database Migration Service', 
+      'Dataform', 'Dataflow', 'Dataproc', 'Datastore', 'DataStream', 'Document AI', 
+      'Earth Engine', 'Eventarc (Standard)', 'Filestore (Basic HDD and Basic SSD tiers)',
+       'Firebase Authentication', 'Firestore', 'Generative AI on Vertex AI (Gemini)', 
+       'GKE Hub', 'GKE Identity Service (Anthos Identity Service)', 'Google Cloud Identity-Aware Proxy',
+        'Google Cloud Marketplace', 'Google Kubernetes Engine', 'Google SecOps (Chronicle SIEM)', 
+        'Google SecOps SOAR', 'Identity & Access Management (IAM)', 'Identity Platform',
+         'Identity-Aware Proxy (IAP)', 'Infrastructure Manager', 'Integration Connectors', 
+         'Key Access Justifications (KAJ)', 'Knative Serving (Cloud Run for Anthos)', 
+         'Looker (Google Cloud Core)', 'Looker Studio (including Pro, formerly Google Data Studio)', 
+         'Memorystore for Memcache', 'Memorystore for Redis', 'Network Connectivity Center', 
+         'Network Intelligence Center', 'Network Service Tiers', 'Persistent Disk', 'Pub/Sub', 
+         'reCAPTCHA Enterprise', 'Secret Manager', 'Secure Source Manager', 'Secure Web Proxy',
+          'Security Command Center (Standard/Premium)', 
+          'Sensitive Data Protection (including Cloud Data Loss Prevention)', 'Serverless VPC Access', 
+          'Service Infrastructure (formerly Service Control; includes Service Management API and Service Consumer Management API)', 
+          'Spanner', 'Speech-to-Text', 'Storage Transfer Service', 'Talent Solution', 'Text-to-Speech', 
+          'Traffic Director (part of Cloud Service Mesh)', 'Vertex AI Forecast', 'Vertex AI Model Registry', 
+          'Vertex AI Search', 'Vertex AI Vector Search', 'Vertex AI Workbench Instances', 'Vertex Batch Predictions',
+           'Vertex ML Metadata', 'Vertex Model Monitoring', 'Vertex Online Predictions', 'Vertex Pipelines',
+            'Vertex Training', 'Video Intelligence API', 'Virtual Private Cloud', 'VPC Service Controls', 
+            'Web Risk API', 'Workflows', 'Workforce Identity Federation (BYOID)']
+
+
+
+'''        
