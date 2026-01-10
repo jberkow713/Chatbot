@@ -1,4 +1,3 @@
-import copy 
 
 def subseq(word,lst):
     # word = 'abcde'
@@ -30,53 +29,48 @@ def subseq(word,lst):
         # set initial found = True , and disqualify based on loop
         # each iteration, copy the original dictionary, because values will be removed from list each time
         # a letter is found in order
-        E = copy.deepcopy(D)
         cur = -1 
-        print(E)
+        # print(E)
         for l in val:
-            if l not in E:
+            if l not in D:
                 # if the letter is not in the dictionary, word can not exist
-                print('not found',l)
+                print(f'{l} not found')
                 found = False 
 
             else:
-                if len(E[l])>0:
+                if len(D[l])>0:
                     # if the length of the remaining indexes for the given letter is >0, 
                     # iterate through remaining values and 
-                    # check to see if any of the values are greater than the cur value, if so set cur= value
-                    # remove value from the list, and break the loop
+                    # check to see if any of the values are greater than the cur value, 
+                    # if so set cur= value break the loop
                     bigger = False 
-                    for IDX in E[l]:
-                        
+                    for IDX in D[l]:
                         if IDX > cur:
                             print(IDX)
                             cur = IDX 
-                            E[l].remove(IDX)
                             bigger = True 
                         
                         if bigger ==True:
                             break 
 
                     if bigger == False:
+                        print(f'{val} out of order')
                         # if a letter exists, but is not in the right order, this will trigger
                         found = False 
                 else:
                     # if the letter has an empty list, it has already been used, and can not be
                     # in the current word
                     found = False
-                    print(val)
                     
-                     
             if found ==False:
                 # at any point, if this is triggered, break from the word, do not increment the count
                 break
 
         if found ==True:
-            print(val)
+            print(f'{val} found')
             count +=1
 
     return count      
-
             
 import string 
 import random 
@@ -84,5 +78,5 @@ s = string.ascii_lowercase[:10]
 
 c = [''.join([random.choice(s) for _ in range(3)]) for _ in range(5) ]
 word = ''.join([random.choice(s) for _ in range(15)])
-print(c)
+print(c,word)
 print(subseq(word,c))
