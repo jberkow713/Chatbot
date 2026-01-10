@@ -54,13 +54,9 @@ def subseq(word,lst):
                             break 
 
                     if bigger == False:
-                        print(f'{val} out of order')
+                        print(f'{val} not found')
                         # if a letter exists, but is not in the right order, this will trigger
                         found = False 
-                else:
-                    # if the letter has an empty list, it has already been used, and can not be
-                    # in the current word
-                    found = False
                     
             if found ==False:
                 # at any point, if this is triggered, break from the word, do not increment the count
