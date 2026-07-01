@@ -26,35 +26,36 @@ def evaluate_board(board):
         
     return score
 
-def get_best_move(board):
+def get_best_move(board,depth):
     """Looks 1 move ahead to find the highest-scoring move."""
     legal_moves = list(board.legal_moves)
     best_move = legal_moves[0]
     
     # White wants the highest score, Black wants the lowest score
+    Moves = {}
     if board.turn == chess.WHITE:
         best_score = float('-inf')
-        for move in legal_moves:
-            board.push(move)  # Simulate the move
-            score = evaluate_board(board)
-            board.pop()       # Undo the move
-            
-            if score > best_score:
-                best_score = score
-                best_move = move
+        
+        for _ in range(depth):
+            for move in legal_moves:
+                board.push(move)  # Simulate the move
+                score = evaluate_board(board)
+                board.pop()       # Undo the move
+                Moves[move]=score 
+        lowest_key = min(Moves, key=Moves.get)                 
+        return lowest_key        
     else:
         best_score = float('inf')
-        for move in legal_moves:
-            board.push(move)
-            score = evaluate_board(board)
-            board.pop()
-            
-            if score < best_score:
-                best_score = score
-                best_move = move
-                
-    return best_move
-def simulate_random_game():
+        for _ in range(depth):
+        
+            for move in legal_moves:
+                board.push(move)
+                score = evaluate_board(board)
+                board.pop()
+                Moves[move]=score 
+        highest_key = max(Moves, key=Moves.get)                 
+        return highest_key
+def simulate_random_game(depth):
     # Initialize a standard chess board state
     board = chess.Board()
     
@@ -64,7 +65,7 @@ def simulate_random_game():
     
     # Loop until the game is over (checkmate, stalemate, draw, etc.)
     while not board.is_game_over():
-       move = get_best_move(board)
+       move = get_best_move(board,depth)
         
         # Push the move onto the board state
        board.push(move)
@@ -79,5 +80,5 @@ def simulate_random_game():
 
 if __name__ == "__main__":
     # To run this, install the library first via: pip install python-chess
-    simulate_random_game()
+    simulate_random_game(10000)
 # Example Simulation Trigger
