@@ -101,20 +101,29 @@ class Puppy:
 class Puppy_Factory:
     def __init__(self, dog_list):
         self.dog_list = dog_list
-        self.create_puppies()
+        self.dog_puppies = self.create_puppies()
     def create_puppies(self):
         Dog_Puppies = {}
-
         for info in self.dog_list:
-            puppy_name = info[2]
             D = Dog(info[0], info[1])
-            Dog_Puppies[D]= D.make_puppy(puppy_name)
+            Dog_Puppies[D]= D.make_puppy(info[2])
 
         return Dog_Puppies
+    def find_parent(self, name):
+        for Dog, Puppy in self.dog_puppies.items():
+            if name == Puppy.name:
+
+                print(f"{Puppy.name}'s parent is {Dog.name}")
+                return 
+        print('Puppy not found')            
+
+
 d = Dog('Danny',25)
 d.bark()
 d.de_age(10)
 d.make_puppy('Brian Griffin')                
 
-p = Puppy_Factory([('Brad', 10, 'Fred'),('James',8,'Mike')])
+p = Puppy_Factory([('Brad', 10, 'Fred'),('James',8,'Mike'),('Mike',10,'Paul')])
+p.find_parent('Fred')
+p.find_parent('Max')
 
