@@ -117,13 +117,23 @@ class Puppy_Factory:
                 return 
         print('Puppy not found')            
 
+class PuppyMaker(Puppy_Factory):
+    def find_parent(self, name):
+        for dog, puppy in self.dog_puppies.items():
+            if name == puppy.name:
+                # Altered behavior: returns a string instead of just printing it
+                print( f"FOUND: {puppy.name} belongs to {dog.name}!")
+                return 
+                
+        print( f"ERROR: {name} was not found in this factory.")
+    
 
 d = Dog('Danny',25)
 d.bark()
 d.de_age(10)
 d.make_puppy('Brian Griffin')                
 
-p = Puppy_Factory([('Brad', 10, 'Fred'),('James',8,'Mike'),('Mike',10,'Paul')])
+p = PuppyMaker([('Brad', 10, 'Fred'),('James',8,'Mike'),('Mike',10,'Paul')])
 p.find_parent('Fred')
 p.find_parent('Max')
 
