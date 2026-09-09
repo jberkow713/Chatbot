@@ -137,3 +137,11 @@ p = PuppyMaker([('Brad', 10, 'Fred'),('James',8,'Mike'),('Mike',10,'Paul')])
 p.find_parent('Fred')
 p.find_parent('Max')
 
+def find_nth_largest(l,n):
+    if len(l)<n:
+        return "Not long enough list"
+    return sorted(l)[-n]
+
+N = [random.randint(0,100) for _ in range(10)]
+print(N)
+print(find_nth_largest(N,3))
