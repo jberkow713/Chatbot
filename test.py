@@ -140,8 +140,25 @@ p.find_parent('Max')
 def find_nth_largest(l,n):
     if len(l)<n:
         return "Not long enough list"
-    return sorted(l)[-n]
+    s = sorted(l)
+    print(s[-n+1:])   
+    return s[-n]
+
+def create_list_range(num, Lower_Range, Upper_Range):
+    return [random.randint(Lower_Range,Upper_Range) for _ in range(num)]
 
 N = [random.randint(0,100) for _ in range(10)]
 print(N)
 print(find_nth_largest(N,3))
+
+N2 = create_list_range(10,-100,100)
+print(N2)
+
+print(find_nth_largest(N2,5))
+
+def find_largest_pipeline(num_largest,lower,upper,Length):
+    l = create_list_range(Length,lower,upper)
+    print(l)
+    return find_nth_largest(l,num_largest)
+
+print(find_largest_pipeline(5,-1000,1000,20))
