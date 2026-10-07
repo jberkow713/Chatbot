@@ -162,3 +162,35 @@ def find_largest_pipeline(num_largest,lower,upper,Length):
     return find_nth_largest(l,num_largest)
 
 print(find_largest_pipeline(5,-1000,1000,20))
+
+def add_stuff(x,y,z, swap=False):
+    if random.randint(0,100)>85:
+        print(x,y,z)
+
+    curr = 0
+    idx = 0
+    
+    
+    print(swap)
+    if swap==True:
+        a = list([x,y,z])
+        i = len(a)
+    else:
+        return random.randint(0,20)  
+    while i >0:
+        curr +=a[idx]
+        idx+=1
+        i-=1
+    return curr 
+
+add_list = []
+for _ in range(100):
+    if random.randint(0,100)>=50:
+        A = True 
+    else:
+        A = False     
+
+    add_list.append((add_stuff(3,4,5, A)))
+print(add_list)  
+print(13-sum(add_list)/len(add_list))  
+        
