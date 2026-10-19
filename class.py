@@ -53,6 +53,7 @@ BLOCK_SIZE = 40  # Size of each grid square in pixels
 # Colors (RGB)
 WHITE = pygame.Color("white")  # Dark Gray
 BLACK = pygame.Color('black')
+RED = pygame.Color('red')
 
 # 3. Create the display window
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -70,6 +71,32 @@ def draw_player():
     # Draw a solid black square (removed the '1' parameter so it fills completely)
     rect = pygame.Rect(coords[0], coords[1], BLOCK_SIZE, BLOCK_SIZE)
     pygame.draw.rect(screen, BLACK, rect)
+def draw_border():
+    Rects = []
+    hor_blocks = int(WINDOW_WIDTH/BLOCK_SIZE)
+    vert_blocks = int(WINDOW_HEIGHT/BLOCK_SIZE)
+    start_x =0
+    start_y = 0
+    end_x = WINDOW_WIDTH-BLOCK_SIZE
+    end_y = WINDOW_HEIGHT-BLOCK_SIZE
+    for _ in range(hor_blocks):
+        Rects.append((start_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
+        start_x+=BLOCK_SIZE
+    start_x = 0 
+    for _ in range(hor_blocks):
+        Rects.append((start_x,end_y,BLOCK_SIZE,BLOCK_SIZE))
+        start_x+=BLOCK_SIZE
+    start_x = 0    
+    for _ in range(vert_blocks):
+        Rects.append((start_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
+        start_y +=BLOCK_SIZE
+    start_y = 0    
+    for _ in range(vert_blocks):
+        Rects.append((end_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
+        start_y +=BLOCK_SIZE
+    for rect in Rects:
+        pygame.draw.rect(screen,RED,rect)    
+
 
 def move_player():
     if not player_coords:  # Wait until coordinates are initialized
@@ -104,6 +131,7 @@ while running:
     # 3. Draw everything
     screen.fill(WHITE)
     draw_player()
+    draw_border()
 
     # 4. Refresh display
     pygame.display.flip()
