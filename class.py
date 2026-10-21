@@ -41,6 +41,7 @@ for x in c:
 
 
 player_coords = []
+border_size = None
 
 # 1. Initialize Pygame
 pygame.init()
@@ -60,6 +61,8 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pygame Grid Example")
 clock = pygame.time.Clock()
 
+
+
 def draw_player():
     if player_coords == []:
         # Fixed: standard order is X (width) then Y (height)
@@ -71,31 +74,34 @@ def draw_player():
     # Draw a solid black square (removed the '1' parameter so it fills completely)
     rect = pygame.Rect(coords[0], coords[1], BLOCK_SIZE, BLOCK_SIZE)
     pygame.draw.rect(screen, BLACK, rect)
-def draw_border():
+
+def draw_border(size):
     Rects = []
-    hor_blocks = int(WINDOW_WIDTH/BLOCK_SIZE)
-    vert_blocks = int(WINDOW_HEIGHT/BLOCK_SIZE)
+    hor_blocks = int(WINDOW_WIDTH/size)
+    vert_blocks = int(WINDOW_HEIGHT/size)
     start_x =0
     start_y = 0
-    end_x = WINDOW_WIDTH-BLOCK_SIZE
-    end_y = WINDOW_HEIGHT-BLOCK_SIZE
+    end_x = WINDOW_WIDTH-size
+    end_y = WINDOW_HEIGHT-size
     for _ in range(hor_blocks):
-        Rects.append((start_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
-        start_x+=BLOCK_SIZE
+        Rects.append((start_x,start_y,size,size))
+        start_x+=size
     start_x = 0 
     for _ in range(hor_blocks):
-        Rects.append((start_x,end_y,BLOCK_SIZE,BLOCK_SIZE))
-        start_x+=BLOCK_SIZE
+        Rects.append((start_x,end_y,size,size))
+        start_x+=size
     start_x = 0    
     for _ in range(vert_blocks):
-        Rects.append((start_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
-        start_y +=BLOCK_SIZE
+        Rects.append((start_x,start_y,size,size))
+        start_y +=size
     start_y = 0    
     for _ in range(vert_blocks):
-        Rects.append((end_x,start_y,BLOCK_SIZE,BLOCK_SIZE))
-        start_y +=BLOCK_SIZE
+        Rects.append((end_x,start_y,size,size))
+        start_y +=size
     for rect in Rects:
-        pygame.draw.rect(screen,RED,rect)    
+        pygame.draw.rect(screen,RED,rect)
+    global border_size
+    border_size=size      
 
 
 def move_player():
@@ -104,19 +110,26 @@ def move_player():
         
     speed = 5
     coords = player_coords[0]
-    
+    # coords are top left of cube
+
     # Get the state of all keyboard buttons
     keys = pygame.key.get_pressed()
     
     # Check states independently (allows holding buttons simultaneously)
     if keys[pygame.K_LEFT]:
-        coords[0] -= speed 
+        
+        new = coords[0]-speed
+        coords[0] = max(new,border_size) 
     if keys[pygame.K_RIGHT]:
-        coords[0] += speed 
+        new = coords[0]+speed
+        coords[0] = min(new,WINDOW_WIDTH-BLOCK_SIZE-border_size) 
+        
     if keys[pygame.K_UP]:    # Fixed typo
-        coords[1] -= speed 
+        new = coords[1]-speed
+        coords[1] = max(new,border_size) 
     if keys[pygame.K_DOWN]:
-        coords[1] += speed 
+        new = coords[1]+speed
+        coords[1] = min(new,WINDOW_HEIGHT-BLOCK_SIZE-border_size) 
 
 running = True
 while running:
@@ -131,7 +144,7 @@ while running:
     # 3. Draw everything
     screen.fill(WHITE)
     draw_player()
-    draw_border()
+    draw_border(BLOCK_SIZE*2)
 
     # 4. Refresh display
     pygame.display.flip()
