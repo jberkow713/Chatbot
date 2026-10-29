@@ -36,11 +36,10 @@ for x in c:
     print(n.low_return())
     print(n.high_return())
 
-
-
-
-
+# ---------------------------------------------------------------------------
+# GAME WORK
 player_coords = []
+block_coords = []
 border_size = None
 
 # 1. Initialize Pygame
@@ -60,8 +59,6 @@ RED = pygame.Color('red')
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pygame Grid Example")
 clock = pygame.time.Clock()
-
-
 
 def draw_player():
     if player_coords == []:
@@ -102,6 +99,25 @@ def draw_border(size):
         pygame.draw.rect(screen,RED,rect)
     global border_size
     border_size=size      
+def add_block():
+    if not player_coords:  # Wait until coordinates are initialized
+        return
+        
+    coords = player_coords[0]
+    r = random.randint(0,100)
+    if r>60:
+        
+        c_0 = coords[0]
+        c_1 = coords[1]
+        COODS = c_0,c_1
+        rect = pygame.Rect(c_0,c_1, BLOCK_SIZE, BLOCK_SIZE)
+        pygame.draw.rect(screen, BLACK, rect)
+        if (c_0,c_1) not in block_coords:
+            block_coords.append((c_0,c_1))
+def draw_blocks():
+    for b in block_coords:
+        rect = pygame.Rect(b[0], b[1], BLOCK_SIZE, BLOCK_SIZE)
+        pygame.draw.rect(screen, BLACK, rect)
 
 
 def move_player():
@@ -144,7 +160,9 @@ while running:
     # 3. Draw everything
     screen.fill(WHITE)
     draw_player()
-    draw_border(BLOCK_SIZE*2)
+    add_block()
+    draw_blocks()
+    draw_border(BLOCK_SIZE)
 
     # 4. Refresh display
     pygame.display.flip()
