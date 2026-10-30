@@ -102,11 +102,15 @@ def draw_border(size):
 def add_block():
     if not player_coords:  # Wait until coordinates are initialized
         return
-        
-    coords = player_coords[0]
-    r = random.randint(0,100)
-    if r>60:
-        
+    
+    mouse_buttons = pygame.mouse.get_pressed()
+        # Check if the left mouse button (index 0) is held down
+    if mouse_buttons[2]:
+        block_coords.clear()
+        return 
+    if mouse_buttons[0]:    
+        coords = player_coords[0]
+
         c_0 = coords[0]
         c_1 = coords[1]
         COODS = c_0,c_1
