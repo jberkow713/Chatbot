@@ -40,6 +40,7 @@ for x in c:
 # GAME WORK
 player_coords = []
 block_coords = []
+remove_coords = []
 border_size = None
 
 # 1. Initialize Pygame
@@ -54,6 +55,7 @@ BLOCK_SIZE = 40  # Size of each grid square in pixels
 WHITE = pygame.Color("white")  # Dark Gray
 BLACK = pygame.Color('black')
 RED = pygame.Color('red')
+YELLOW = pygame.Color('yellow')
 
 # 3. Create the display window
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -98,31 +100,119 @@ def draw_border(size):
     for rect in Rects:
         pygame.draw.rect(screen,RED,rect)
     global border_size
-    border_size=size      
+    border_size=size     
+
+def check_manual_collision(x1, y1, x2, y2, BLOCK_SIZE):
+  # Check X-axis overlap and Y-axis overlap simultaneously
+  x_overlap = (x1 < x2 + BLOCK_SIZE) and (x1 + BLOCK_SIZE > x2)
+  y_overlap = (y1 < y2 + BLOCK_SIZE) and (y1 + BLOCK_SIZE > y2)
+
+  return x_overlap and y_overlap
+def draw_block_color(x, y, x_block, y_block, color):
+  if color == BLACK:
+    if (x, y, BLOCK_SIZE, BLOCK_SIZE) not in block_coords:
+      block_coords.append((x, y, BLOCK_SIZE, BLOCK_SIZE))
+
+  if color == WHITE:
+    new_blocks = []
+    # 1. Define the Eraser's real boundaries explicitly
+    ex1, ey1 = x, y
+    ex2, ey2 = x + BLOCK_SIZE, y + BLOCK_SIZE
+
+    # Use a copy slice [:] so we can safely remove items while looping
+    for coord in block_coords[:]:
+      bx, by, bw, bh = coord
+      bx2, by2 = bx + bw, by + bh
+
+      # Only alter blocks that actually intersect
+      if check_manual_collision(x, y, bx, by, BLOCK_SIZE):
+        block_coords.remove(coord)
+
+        # 2. Slice Left: If the block extends to the left of the eraser
+        if bx < ex1:
+          new_blocks.append((bx, by, ex1 - bx, bh))
+
+        # 3. Slice Right: If the block extends to the right of the eraser
+        if bx2 > ex2:
+          new_blocks.append((ex2, by, bx2 - ex2, bh))
+
+        # 4. Slice Top: Clip what is remaining vertically inside the eraser's X-span
+        # We find the exact window of horizontal overlap to prevent double corners
+        overlap_left = max(bx, ex1)
+        overlap_right = min(bx2, ex2)
+
+        if overlap_left < overlap_right:
+          if by < ey1:
+            new_blocks.append(
+                (overlap_left, by, overlap_right - overlap_left, ey1 - by)
+            )
+
+          # 5. Slice Bottom: Clip what is remaining vertically beneath
+          if by2 > ey2:
+            new_blocks.append(
+                (overlap_left, ey2, overlap_right - overlap_left, by2 - ey2)
+            )
+
+    # Clean up zero-width or zero-height slivers before appending to prevent stretching artifacts
+    valid_remnants = [
+        b for b in new_blocks if b[2] > 1 and b[3] > 1
+    ]  # 1px threshold
+    block_coords.extend(valid_remnants)
+'''    
+def draw_block_color(x,y,x_block,y_block,color):
+    rect = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
+    pygame.draw.rect(screen, color, rect)
+    if color==BLACK:
+        if (x,y) not in block_coords:
+            block_coords.append((x,y,BLOCK_SIZE,BLOCK_SIZE))
+        # TODO
+        # Insert collision function here to check if (x,y) is colliding with any values from the 
+        # remove_block list, and then remove it from the remove block list
+        
+    if color ==WHITE:
+        e = enumerate(block_coords)
+        for idx,coord in e:
+            if check_manual_collision(x,y,coord[0],coord[1],BLOCK_SIZE)==True:
+                if coord[1]+BLOCK_SIZE>y:
+                    print(y,coord[1])
+                    diff = y-coord[1]
+                    block_coords[idx]=((coord[0],coord[1],BLOCK_SIZE,diff))
+                    return 
+                    # print(coord[0],y)
+                    # print(coord[0],coord[1]-BLOCK_SIZE)    
+                
+        # remove_coords.append((x,y))
+    #TODO
+    # white needs to be drawn initially, so remove_coords need to append the value, but because these values
+    # need to remove the remove block from blocks that are being drawn, or from blocks that are touching 
+    # the new blocks being drawn, need a collision function that tracks the coords of the draw_block_color(x,y)
+    # value, versus all values in the remove list, and if so, remove that from the remove_block list
+'''
 def add_block():
     if not player_coords:  # Wait until coordinates are initialized
         return
     
     mouse_buttons = pygame.mouse.get_pressed()
+    coords= player_coords[0]
         # Check if the left mouse button (index 0) is held down
     if mouse_buttons[2]:
-        block_coords.clear()
+        draw_block_color(*coords,BLOCK_SIZE,BLOCK_SIZE,WHITE)
         return 
     if mouse_buttons[0]:    
-        coords = player_coords[0]
+        draw_block_color(*coords,BLOCK_SIZE,BLOCK_SIZE,BLACK)
 
-        c_0 = coords[0]
-        c_1 = coords[1]
-        COODS = c_0,c_1
-        rect = pygame.Rect(c_0,c_1, BLOCK_SIZE, BLOCK_SIZE)
-        pygame.draw.rect(screen, BLACK, rect)
-        if (c_0,c_1) not in block_coords:
-            block_coords.append((c_0,c_1))
+def draw_blocks():
+  for b in block_coords:
+    # Ensure we use the dynamic width b[2] and height b[3] generated by the eraser
+    rect = pygame.Rect(b[0], b[1], b[2], b[3])
+    pygame.draw.rect(screen, BLACK, rect)
+'''
 def draw_blocks():
     for b in block_coords:
-        rect = pygame.Rect(b[0], b[1], BLOCK_SIZE, BLOCK_SIZE)
+        rect = pygame.Rect(b[0], b[1], b[2],b[3])
         pygame.draw.rect(screen, BLACK, rect)
-
+'''    
+            
 
 def move_player():
     if not player_coords:  # Wait until coordinates are initialized
@@ -162,10 +252,13 @@ while running:
     move_player()
 
     # 3. Draw everything
+    
     screen.fill(WHITE)
-    draw_player()
+    
     add_block()
     draw_blocks()
+    draw_player()
+    
     draw_border(BLOCK_SIZE)
 
     # 4. Refresh display
