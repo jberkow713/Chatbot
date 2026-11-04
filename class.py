@@ -40,7 +40,6 @@ for x in c:
 # GAME WORK
 player_coords = []
 block_coords = []
-remove_coords = []
 border_size = None
 
 # 1. Initialize Pygame
@@ -255,6 +254,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            # Check if that specific key was the Escape key
+            if event.key == pygame.K_ESCAPE:
+                block_coords.clear()
+
 
     # 2. Handle continuous input & updates
     move_player()
