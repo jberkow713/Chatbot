@@ -53,6 +53,7 @@ BLOCK_SIZE = 40  # Size of each grid square in pixels
 # Colors (RGB)
 WHITE = pygame.Color("white")  # Dark Gray
 BLACK = pygame.Color('black')
+BLUE = pygame.Color('blue')
 RED = pygame.Color('red')
 YELLOW = pygame.Color('yellow')
 
@@ -71,7 +72,7 @@ def draw_player():
     
     # Draw a solid black square (removed the '1' parameter so it fills completely)
     rect = pygame.Rect(coords[0], coords[1], BLOCK_SIZE, BLOCK_SIZE)
-    pygame.draw.rect(screen, BLACK, rect)
+    pygame.draw.rect(screen, BLUE, rect)
 
 def draw_border(size):
     Rects = []
@@ -212,7 +213,7 @@ def add_block():
 def draw_blocks():
   for bx, by, bw, bh in block_coords:
     rect = pygame.Rect(bx, by, bw, bh)
-    pygame.draw.rect(screen, BLACK, rect)
+    pygame.draw.rect(screen, BLUE, rect)
 '''
 def draw_blocks():
     for b in block_coords:
