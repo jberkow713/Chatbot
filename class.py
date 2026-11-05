@@ -46,8 +46,8 @@ border_size = None
 pygame.init()
 
 # 2. Setup constants
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 900
+WINDOW_HEIGHT = 900
 BLOCK_SIZE = 40  # Size of each grid square in pixels
 
 # Colors (RGB)
@@ -62,6 +62,8 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pygame Grid Example")
 clock = pygame.time.Clock()
 
+
+
 def draw_player(COLOR):
     if player_coords == []:
         # Fixed: standard order is X (width) then Y (height)
@@ -74,7 +76,7 @@ def draw_player(COLOR):
     rect = pygame.Rect(coords[0], coords[1], BLOCK_SIZE, BLOCK_SIZE)
     pygame.draw.rect(screen, COLOR, rect)
 
-def draw_border(size):
+def draw_border(size,color):
     Rects = []
     hor_blocks = int(WINDOW_WIDTH/size)
     vert_blocks = int(WINDOW_HEIGHT/size)
@@ -98,7 +100,7 @@ def draw_border(size):
         Rects.append((end_x,start_y,size,size))
         start_y +=size
     for rect in Rects:
-        pygame.draw.rect(screen,RED,rect)
+        pygame.draw.rect(screen,color,rect)
     global border_size
     border_size=size     
 
@@ -267,8 +269,19 @@ def create_input():
             # If they typed a letter, this passes and lets the while loop ask again
             print("Please enter a valid number.")          
     # 2. Output the variable back to the user
-    return output_dict[color]
-COLOR = create_input()
+    color = output_dict[color]
+
+    if color ==pygame.Color('black'):
+        opposite = pygame.Color('red')
+    elif color == pygame.Color('red'):
+        opposite = pygame.Color('black')
+    elif color ==   pygame.Color('yellow'):
+        opposite = pygame.Color('blue')
+    elif color == pygame.Color('blue'):
+        opposite = pygame.Color('yellow')          
+    return color, opposite
+
+COLOR,opposite= create_input()
 
 running = True
 while running:
@@ -293,7 +306,7 @@ while running:
     draw_blocks(COLOR)
     draw_player(COLOR)
     
-    draw_border(BLOCK_SIZE)
+    draw_border(BLOCK_SIZE,opposite)
 
     # 4. Refresh display
     pygame.display.flip()
