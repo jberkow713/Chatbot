@@ -62,7 +62,7 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pygame Grid Example")
 clock = pygame.time.Clock()
 
-def draw_player():
+def draw_player(COLOR):
     if player_coords == []:
         # Fixed: standard order is X (width) then Y (height)
         coords = [WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2]
@@ -72,7 +72,7 @@ def draw_player():
     
     # Draw a solid black square (removed the '1' parameter so it fills completely)
     rect = pygame.Rect(coords[0], coords[1], BLOCK_SIZE, BLOCK_SIZE)
-    pygame.draw.rect(screen, BLUE, rect)
+    pygame.draw.rect(screen, COLOR, rect)
 
 def draw_border(size):
     Rects = []
@@ -210,10 +210,10 @@ def add_block():
     draw_block_color(*coords, BLOCK_SIZE, BLOCK_SIZE, BLACK)
 
 
-def draw_blocks():
+def draw_blocks(COLOR):
   for bx, by, bw, bh in block_coords:
     rect = pygame.Rect(bx, by, bw, bh)
-    pygame.draw.rect(screen, BLUE, rect)
+    pygame.draw.rect(screen, COLOR, rect)
 '''
 def draw_blocks():
     for b in block_coords:
@@ -248,6 +248,27 @@ def move_player():
     if keys[pygame.K_DOWN]:
         new = coords[1]+speed
         coords[1] = min(new,WINDOW_HEIGHT-BLOCK_SIZE-border_size) 
+def create_input():
+    output_dict = {1: pygame.Color('black'),
+                    3:pygame.Color('blue'),
+                    2:pygame.Color('red'),
+                    4:pygame.Color('yellow')
+                }
+    CHOSEN=False
+    while CHOSEN==False:
+        try:
+            color = int(input("What color do you want to draw in:\
+                            Type 1 for Black, 2 for Red, 3 for Blue, or 4 for Yellow  "))
+            outputs = [1,2,3,4]
+            if color in outputs:
+                CHOSEN=True
+                print('When playing the game, press the Esc button at anytime to reset the grid')
+        except ValueError:
+            # If they typed a letter, this passes and lets the while loop ask again
+            print("Please enter a valid number.")          
+    # 2. Output the variable back to the user
+    return output_dict[color]
+COLOR = create_input()
 
 running = True
 while running:
@@ -269,8 +290,8 @@ while running:
     screen.fill(WHITE)
     
     add_block()
-    draw_blocks()
-    draw_player()
+    draw_blocks(COLOR)
+    draw_player(COLOR)
     
     draw_border(BLOCK_SIZE)
 
