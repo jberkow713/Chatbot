@@ -57,6 +57,7 @@ BLUE = pygame.Color('blue')
 RED = pygame.Color('red')
 YELLOW = pygame.Color('yellow')
 
+SPEED = 0
 # 3. Create the display window
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pygame Grid Example")
@@ -165,36 +166,6 @@ def draw_block_color(x, y, x_block, y_block, color):
 
     # Add the valid sliced pieces back
     block_coords.extend(new_blocks)
-'''    
-def draw_block_color(x,y,x_block,y_block,color):
-    rect = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
-    pygame.draw.rect(screen, color, rect)
-    if color==BLACK:
-        if (x,y) not in block_coords:
-            block_coords.append((x,y,BLOCK_SIZE,BLOCK_SIZE))
-        # TODO
-        # Insert collision function here to check if (x,y) is colliding with any values from the 
-        # remove_block list, and then remove it from the remove block list
-        
-    if color ==WHITE:
-        e = enumerate(block_coords)
-        for idx,coord in e:
-            if check_manual_collision(x,y,coord[0],coord[1],BLOCK_SIZE)==True:
-                if coord[1]+BLOCK_SIZE>y:
-                    print(y,coord[1])
-                    diff = y-coord[1]
-                    block_coords[idx]=((coord[0],coord[1],BLOCK_SIZE,diff))
-                    return 
-                    # print(coord[0],y)
-                    # print(coord[0],coord[1]-BLOCK_SIZE)    
-                
-        # remove_coords.append((x,y))
-    #TODO
-    # white needs to be drawn initially, so remove_coords need to append the value, but because these values
-    # need to remove the remove block from blocks that are being drawn, or from blocks that are touching 
-    # the new blocks being drawn, need a collision function that tracks the coords of the draw_block_color(x,y)
-    # value, versus all values in the remove list, and if so, remove that from the remove_block list
-'''
 
 def add_block():
   if not player_coords:  # Wait until coordinates are initialized
@@ -223,12 +194,12 @@ def draw_blocks():
         pygame.draw.rect(screen, BLACK, rect)
 '''    
             
-
 def move_player():
     if not player_coords:  # Wait until coordinates are initialized
         return
-        
-    speed = 5
+
+    global SPEED     
+    speed = SPEED
     coords = player_coords[0]
     # coords are top left of cube
 
@@ -250,6 +221,7 @@ def move_player():
     if keys[pygame.K_DOWN]:
         new = coords[1]+speed
         coords[1] = min(new,WINDOW_HEIGHT-BLOCK_SIZE-border_size) 
+
 def create_input():
     output_dict = {1: pygame.Color('black'),
                     3:pygame.Color('blue'),
@@ -267,7 +239,8 @@ def create_input():
                 print('When playing the game, press the Esc button at anytime to reset the grid')
         except ValueError:
             # If they typed a letter, this passes and lets the while loop ask again
-            print("Please enter a valid number.")          
+            print("Please enter a valid number.")
+
     # 2. Output the variable back to the user
     color = output_dict[color]
 
@@ -279,6 +252,20 @@ def create_input():
         opposite = pygame.Color('blue')
     elif color == pygame.Color('blue'):
         opposite = pygame.Color('yellow')          
+    
+    CHOSEN = False 
+    while CHOSEN ==False:
+        try:
+            speed = int(input('what speed do you want to move at? Choose between 1 and 10, higher is faster:\
+            '))
+            speeds = [x for x in range(2,10)]
+            if speed in speeds:
+                global SPEED 
+                SPEED = speed
+                CHOSEN=True 
+        except ValueError:
+            print('Please enter a number between 1 and 10')    
+
     return color, opposite
 
 COLOR,opposite= create_input()
